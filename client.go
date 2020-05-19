@@ -43,8 +43,12 @@ type Client struct {
 
 // Dial returns a new Client connected to an SMTP server at addr.
 // The addr must include a port, as in "mail.example.com:smtp".
-func Dial(ctx context.Context, addr string) (*Client, error) {
+func Dial(inCtx context.Context, addr string) (*Client, error) {
 	d := net.Dialer{}
+
+	ctx, cancel := context.WithCancel(inCtx)
+	defer cancel()
+
 	conn, err := d.DialContext(ctx, "tcp", addr)
 
 	if err != nil {
